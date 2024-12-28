@@ -1,7 +1,7 @@
 # x64assemblyTutorial
 ### short introduction
 I am currently learning x64assembly, and i will be writing this as I am learning. This Tutorial is written exactly how I would have wished a Tutorial to be when learning.
-This repository is not really made for anyone to read, and more like a document for me to re-read and reflect on, however it is written in a way that should be understandable to anyone.
+This repository is not really made for anyone to read, and more like a document for me to re-read and reflect on, however it is written in a way that should be understandable to anyone with a little knowledge about adresses, heap and stack.
 Also, feel free to correct me if i made any mistakes. 
 
 My first step of learning assembly was to figure out which kind i wanted to learn.
@@ -155,12 +155,12 @@ The `systemcall` stores its `return value in the rax register`. This means, that
 Even to exit a program, you need to perform a syscall.
 ```assembly
 movq $60, %rax
-movq $0, %rdx
+movq $0, %rdi
 systemcall
 ```
 The `rax is set to 60`, which makes the syscall a `sys_exit`.
 
-The `rdx` determines for sys_exit the `error_code`. As you might know, an error code of 0 means that no error happened.
+The `rdi` determines for sys_exit the `error_code`. As you might know, an error code of 0 means that no error happened.
 
 ## 0. 7 - First program
 Combining everything that has been said up until now would look like this:
@@ -170,11 +170,11 @@ Combining everything that has been said up until now would look like this:
 
 _start:
   movq $60, %rax
-  movq $0, %rdx
+  movq $0, %rdi
   systemcall
 
 ```
-oh and btw dont forget to add a new line at the end, because it will not assemble if you dont
+oh and dont forget to add a new line at the end, because it will not assemble if you dont
 
 Now you just need to assemble and execute the program. For me that would be:
 ```txt
@@ -182,10 +182,92 @@ gcc useless.s -o -g
 ld useless.o -o useless
 ./useless
 ```
-Now to see the error_code just type in
+Now to see the error_code just type:
 ```txt
 echo $?
 ```
-Obviously this will also work if you use another error_code.
+Obviously this will also work for the rdi/error_code being any other value.
 
 # 1 - Hello World  
+In this chapter I will show you how to write a easily readable program that can write "Hello World" in the Terminal.
+
+## 1. 0 - What needs to be done?
+We have previously written a Program that starts and ends.
+
+For it to write "Hello World" we will need to `create a string` and `tell the OS to print it` before exiting the program. 
+
+## 1. 1 - Creating a string
+The `.ascii` tells the computer that the "Hello World" is a string. Apart from `.ascii` you may also find:
+```txt
+.ascii  "Hello World\n"  |  
+.asciz  "Hello World\n"  |  adds a \0 (termination char) at the end
+.string "Hello World\n"  |  adds a \0 (termination char) at the end
+```
+To access the string we will use a `label` and the `assembler directive: .ascii`.
+```assembly
+.Hello_World:
+  .ascii "Hello World\n"
+```
+When the label is referenced a certain way, it is replaced by the adress of the string. 
+
+Here .Hello_World is not an assembler directive. The . is a stylistic choice and only there for me to keep track of the labels referencing to assembler directives.
+
+I use the website https://ftp.gnu/old-gnu/Manuals/gas/html_chapter/as_7.html whenever I need to look up assembler directives.
+
+## 1. 2 - Writing into the Terminal
+### sys_write
+To write into the terminal we need the `Write` syscall: By looking it up we see the following:
+```txt
+rax                      |  1  
+rdi (destination index)  |  1 (for the Terminal)
+rsi (source index)       |  adress of the string
+rdx                      |  lenght of the string
+```
+
+This means that the code should look like this:
+```assembly
+movq $1, %rax
+movq $1, %rdi
+leaq .Hello_World, %rsi
+movq $12, %rdx
+syscall
+```
+Here the label reference `.Hello_World` represents the adress of the in 1. 1 defined string: `"Hello World\n"`.
+### lea instruction
+`lea` stands for `load effective adress`
+
+The `lea instruction` copies the `adress` unlike the `mov instruction` which copies the value. 
+```assembly
+leaq .Hello_World, %rsi
+; is the same as writing
+movq $.Hello_World, %rsi
+```
+Note that I have written `$.Hello_World`. This works because the `$` takes the `direct value` of whatever we write after it, in this case the `adress`.
+
+However the latter is not the normal way to do this. Usually the `lea` instruction is used in cases like these.
+
+I `highly recommended to use the lea instruction` for readability. Especially since the intel syntax does not use a $.
+
+## 1. 3 - Hello World program
+By combining everything that has been said, we get something like this:
+```assembly
+.global _start
+.Hello_World:
+  .ascii "Hello World\n"
+.text
+
+_start:
+  movq $1, %rax
+  movq $1, %rdi
+  leaq .Hello_World, %rsi
+  movq $12, %rdx
+  syscall
+
+  movq $60, %rax
+  movq $0, %rdi
+  syscall
+```
+However there are still a few things that can be done to make this program either more readable or better.
+
+### End.
+It seems that you have reached the end of this Tutorial. If you want to read more, you will just need to wait a bit since I am currently updating daily.
