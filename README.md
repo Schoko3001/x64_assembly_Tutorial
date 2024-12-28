@@ -15,7 +15,11 @@ The reasons?
   4. Linux because searching for Systemcalls on windows is really painfull
 
 # 0 - absolute Basics
-## 0.0 writing and assembling a program
+At the end of this chapter you will be able to write `a program that can ... do nothing?` wait what?
+
+Well, even writing a program that does nothing except for not crashing is not that simple in assembly.
+
+## 0 . 0 writing and assembling a program
 My Code is written on `vsCode` with the `GNU Assembler Lanuguage Support`.
 
 I use the `.s` file extension.
@@ -25,9 +29,9 @@ To assemble and execute a file I type the following things into the terminal:
   2. `ld file.o -o file`   file.o -> file
   3. `./file`
 
-## 0.1 fundamental keywords
+## 0 . 1 - fundamental keywords
 ### .global
-To tell the computer where to start, `.global something` is written at the top of the program. This will tell the computer to start executing the code wherever you write `something:`.
+To tell the computer where to start, `.global something` is written at the top of the program. This will tell the computer to start executing the code from wherever you write `something:`.
 ```assembly
 .global _start
 .text
@@ -42,7 +46,7 @@ The `.text` tells the computer where code is. This part of a program marks the b
 The expression `something:` is call a Label.
 A `label` always has a `:` at the end. The label serves as a "gateway" that can be jumped to or accessed.
 
-## 0.2 movq
+## 0 . 2 - movq
 ### mov
 The mov keyword sets one thing equal to another. In my opinion it is the most essential operation
 ```assembly
@@ -72,7 +76,7 @@ f | 32 bits |  4 bytes
 t | 80 bits | 10 bytes
 ```
 
-## 0.3 $
+## 0 . 3 - $
 The `$` is used to read the value of something. For example: assigning "a" the value 5 would look like this:
 ```assembly
 movq $1, "a"
@@ -81,7 +85,7 @@ The `$` symbol tells the computer to treat whatever comes after it as `the direc
 
 I personally like to compare it to the `& in c` that tells you the `adress of a variable` and `not the value of a variable`.
 
-## 0.4 Registers
+## 0 . 4 - Registers
 ### register types
 A register is the fastest memory storage that can be accessed. But there are only `16 general purpose registers` in the `x64 architecture`. They are the following:
 ```txt
@@ -121,10 +125,62 @@ a = 5
 b = a
 ```
 
-## 0.5 syscall
-  (incomplete)
+## 0 . 5 - syscall
+In order to do anything outside the program, be it writing, reading, or even exiting the program, you need perform a `syscall`, short for `systemcall`. Think of it as asking the operating system to do something for you.
 
-## 0.6 exit
-  (incomplete)
+When writing:
+```assembly
+movq $60, %rax
+movq $0, %rdx
+systemcall
+```
 
+The `rax` register determines the type of syscall performed.
+
+The `rdi` register value is the `destination index` of the syscall.
+
+The `rsi` register value is the `source index` of the syscall.
+
+For some systemcalls, the registers `rdx`, `r10`, `r8` and `r9` are also needed.
+
+I personally use https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/ to look up the different syscalls 
+
+The `systemcall` stores its `return value in the rax register`. This means, that if you want to perform muliple systemcalls of the same type with the same rax value, you still need to `readjust the rax value every syscall`.
+
+## 0 . 6 - exit
+Even to exit a program, you need to perform a syscall.
+```assembly
+movq $60, %rax
+movq $0, %rdx
+systemcall
+```
+The `rax is set to 60`, which makes the syscall a `sys_exit`.
+
+The `rdx` determines for sys_exit the `error_code`. As you might know, an error code of 0 means that no error happened.
+
+## 0 . 7 - first program
+combining everything that has been said up until now would look like this:
+```assembly
+.global _start
+.text
+
+_start:
+  movq $60, %rax
+  movq $0, %rdx
+  systemcall
+
+```
+oh and btw dont forget to add a new line at the end, because it will not assemble if you dont
+
+Now you just need to assemble and execute the program. For me that would be:
+```txt
+gcc useless.s -o -g
+ld test.o -o useless
+./useless
+```
+Now to see the error_code just type in
+```txt
+echo $?
+```
+Obviously this will also work if you use another error_code.
 
