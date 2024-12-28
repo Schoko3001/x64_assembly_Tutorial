@@ -179,7 +179,7 @@ oh and btw dont forget to add a new line at the end, because it will not assembl
 Now you just need to assemble and execute the program. For me that would be:
 ```txt
 gcc useless.s -o -g
-ld test.o -o useless
+ld useless.o -o useless
 ./useless
 ```
 Now to see the error_code just type in
@@ -188,4 +188,4 @@ echo $?
 ```
 Obviously this will also work if you use another error_code.
 
-# 1 - Hello World
+# 1 - Hello World  
