@@ -14,12 +14,16 @@ The reasons?
   3. gnu uses AT&T as a standard
   4. Linux because searching for Systemcalls on windows is really painfull
 
+### useful Links
+  1. sycall https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/
+  2. 
+
 # 0 - absolute Basics
 At the end of this chapter you will be able to write `a program that can ... do nothing?` wait what?
 
 Well, even writing a program that does nothing except for not crashing is not that simple in assembly.
 
-## 0 . 0 writing and assembling a program
+## 0. 0 writing and assembling a program
 My Code is written on `vsCode` with the `GNU Assembler Lanuguage Support`.
 
 I use the `.s` file extension.
@@ -29,7 +33,7 @@ To assemble and execute a file I type the following things into the terminal:
   2. `ld file.o -o file`   file.o -> file
   3. `./file`
 
-## 0 . 1 - fundamental keywords
+## 0. 1 - Most fundamental keywords
 ### .global
 To tell the computer where to start, `.global something` is written at the top of the program. This will tell the computer to start executing the code from wherever you write `something:`.
 ```assembly
@@ -46,7 +50,7 @@ The `.text` tells the computer where code is. This part of a program marks the b
 The expression `something:` is call a Label.
 A `label` always has a `:` at the end. The label serves as a "gateway" that can be jumped to or accessed.
 
-## 0 . 2 - movq
+## 0. 2 - movq
 ### mov
 The mov keyword sets one thing equal to another. In my opinion it is the most essential operation
 ```assembly
@@ -76,7 +80,7 @@ f | 32 bits |  4 bytes
 t | 80 bits | 10 bytes
 ```
 
-## 0 . 3 - $
+## 0. 3 - $
 The `$` is used to read the value of something. For example: assigning "a" the value 5 would look like this:
 ```assembly
 movq $1, "a"
@@ -85,19 +89,19 @@ The `$` symbol tells the computer to treat whatever comes after it as `the direc
 
 I personally like to compare it to the `& in c` that tells you the `adress of a variable` and `not the value of a variable`.
 
-## 0 . 4 - Registers
+## 0. 4 - Registers
 ### register types
 A register is the fastest memory storage that can be accessed. But there are only `16 general purpose registers` in the `x64 architecture`. They are the following:
 ```txt
-|  rax  |  register a extended
-|  rbx  |  register b extended
-|  rcx  |  register c extended
-|  rdx  |  register d extended
-
-|  rbp  |  register base pointer
-|  rsp  |  register stack pointer
-|  rsi  |  register source index
-|  rdi  |  register destination index
+rax  |  register a extended
+rbx  |  register b extended
+rcx  |  register c extended
+rdx  |  register d extended
+-----|---------------------
+rbp  |  register base pointer
+rsp  |  register stack pointer
+rsi  |  register source index
+rdi  |  register destination index
 
 r8, r9, r10, r11, r12, r13, r14, r15
 ```
@@ -125,7 +129,7 @@ a = 5
 b = a
 ```
 
-## 0 . 5 - syscall
+## 0. 5 - Syscall
 In order to do anything outside the program, be it writing, reading, or even exiting the program, you need perform a `syscall`, short for `systemcall`. Think of it as asking the operating system to do something for you.
 
 When writing:
@@ -147,7 +151,7 @@ I personally use https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86
 
 The `systemcall` stores its `return value in the rax register`. This means, that if you want to perform muliple systemcalls of the same type with the same rax value, you still need to `readjust the rax value every syscall`.
 
-## 0 . 6 - exit
+## 0. 6 - Exit
 Even to exit a program, you need to perform a syscall.
 ```assembly
 movq $60, %rax
@@ -158,8 +162,8 @@ The `rax is set to 60`, which makes the syscall a `sys_exit`.
 
 The `rdx` determines for sys_exit the `error_code`. As you might know, an error code of 0 means that no error happened.
 
-## 0 . 7 - first program
-combining everything that has been said up until now would look like this:
+## 0. 7 - First program
+Combining everything that has been said up until now would look like this:
 ```assembly
 .global _start
 .text
@@ -184,3 +188,4 @@ echo $?
 ```
 Obviously this will also work if you use another error_code.
 
+# 1 - Hello World
