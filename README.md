@@ -1,10 +1,10 @@
 # x64assemblyTutorial
 ### short introduction
-I am currently learning x64assembly, and i will be writing this as I am learning. This Tutorial is written exactly how I would have wished a Tutorial to be when learning.
+I will be writing this Tutorial as I am learning, and it is written exactly how I would have wished a Tutorial to be when learning.
 This repository is not really made for anyone to read, and more like a document for me to re-read and reflect on, however it is written in a way that should be understandable to anyone with a little knowledge about adresses, heap and stack.
-Also, feel free to correct me if i made any mistakes. 
+Also, feel free to correct me if I made any mistakes. 
 
-My first step of learning assembly was to figure out which kind i wanted to learn.
+My first step of learning assembly was to figure out which kind I wanted to learn.
 
 After a day of playing around I decided to learn `x64` with `AT&T syntax` on `Linux (on a virtual machine)`.
 
@@ -50,9 +50,9 @@ The `.text` tells the computer where code is. This part of a program marks the b
 The expression `something:` is call a Label.
 A `label` always has a `:` at the end. The label serves as a "gateway" that can be jumped to or accessed.
 
-## 0. 2 - movq
+## 0. 2 - movq instruction
 ### mov
-The mov keyword sets one thing equal to another. In my opinion it is the most essential operation
+The mov instruction sets one thing equal to another. In my opinion it is the most essential instructions
 ```assembly
 movq "b", "a"     ;"a" and "b" mean nothing, not real code
 ```
@@ -64,7 +64,7 @@ It is important to remember that this repository is about the AT&T syntax, becau
 ```c
 "b" = "a" //Intel
 ```
-### operation suffix
+### instruction suffix
 The `q` at the end of `movq` is a called an `operation suffix` and stands for `quad`, an operation parameter of `64bits`. 
 
 It is important to know that there are actually multiple of these operation suffixes:
@@ -174,7 +174,7 @@ _start:
   systemcall
 
 ```
-oh and dont forget to add a new line at the end, because it will not assemble if you dont
+oh and don't forget to add a new line at the end, because it will not assemble if you don't
 
 Now you just need to assemble and execute the program. For me that would be:
 ```txt
@@ -267,7 +267,24 @@ _start:
   movq $0, %rdi
   syscall
 ```
-However there are still a few things that can be done to make this program either more readable or better.
+## 1. 4 - .equ
+The .equ assembler directive can be used to make the program more readable by giving us the opportunity to replace numbers with words.
+```assembly
+.equ Hello_World_len,12
+```
+Now the code for printing "Hello World\n" would look like this:
+```assembly
+movq $1, %rax
+movq $1, %rdi
+leaq .Hello_World, %rsi
+movq Hello_World_len, %rdx
+syscall
+```
+Although a similar readability can be achieved with comments, .equ might still be usefull in some cases.
+
+# 2. 0 Stack
+  (incomplete)
+
 
 ### End.
 It seems that you have reached the end of this Tutorial. If you want to read more, you will just need to wait a bit since I am currently updating daily.
