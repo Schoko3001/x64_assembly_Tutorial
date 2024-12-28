@@ -1,4 +1,5 @@
 # x64assemblyTutorial
+### short introduction
 I am currently learning x64assembly, and i will be writing this as I am learning. This Tutorial is written exactly how I would have wished a Tutorial to be when learning.
 This repository is not really made for anyone to read, and more like a document for me to re-read and reflect on, however it is written in a way that should be understandable to anyone.
 Also, feel free to correct me if i made any mistakes. 
@@ -25,9 +26,8 @@ To assemble and execute a file I type the following things into the terminal:
   3. `./file`
 
 ## 0.1 fundamental keywords
+### .global
 To tell the computer where to start, `.global something` is written at the top of the program. This will tell the computer to start executing the code wherever you write `something:`.
-
-The expression `something:` is called a Label.
 ```assembly
 .global _start
 .text
@@ -36,8 +36,11 @@ _start:
   "do something"
   "exit the program"
 ```
-A `label` always has a `:` at the end. The label serves as a "gateway" that can be jumped to or accessed.
+### .text
 The `.text` tells the computer where code is. This part of a program marks the beginning of a text segment.
+### Label
+The expression `something:` is call a Label.
+A `label` always has a `:` at the end. The label serves as a "gateway" that can be jumped to or accessed.
 
 ## 0.2 movq
 ### mov
@@ -79,9 +82,9 @@ The `$` symbol tells the computer to treat whatever comes after it as `the direc
 I personally like to compare it to the `& in c` that tells you the `adress of a variable` and `not the value of a variable`.
 
 ## 0.4 Registers
+### register types
 A register is the fastest memory storage that can be accessed. But there are only `16 general purpose registers` in the `x64 architecture`. They are the following:
 ```txt
-
 |  rax  |  register a extended
 |  rbx  |  register b extended
 |  rcx  |  register c extended
@@ -104,13 +107,24 @@ These expressions refer to a smaller amount of bytes of the same register.
 64 bits  | rax | rbx | ... | r8  | r9  | ...
 32 bits  | eax | ebx | ... | r8d | r9d | ...
 16 bits  |  ax |  bx | ... | r8w | r9q | ...
- 8 bits  idk look it up yourself you lazy
+ 8 bits  | idk look it up yourself you lazy
+```
+### usage
+In the AT&T assembly syntax, you need to put a `%` in front of the register name
+```assembly
+movq $5, %rax
+movq %rax, %rbx 
+```
+In other programming languages, this code would look might look something like this:
+```py
+a = 5
+b = a
 ```
 
-## 0.6 syscall
+## 0.5 syscall
   (incomplete)
 
-## 0.7 exit
+## 0.6 exit
   (incomplete)
 
 
