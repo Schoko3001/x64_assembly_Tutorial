@@ -34,6 +34,9 @@ To assemble and execute a file I type the following things into the terminal:
   3. `./file`
 
 ## 0. 1 - Most fundamental keywords
+### Instruction pointer
+The `Instruction pointer` determines `which line of code is being executed`. It can be manipulated by many different instructions that i will write about in chapter 2.
+
 ### .global
 To tell the computer where to start, `.global something` is written at the top of the program. This will tell the computer to start executing the code from wherever you write `something:`.
 ```assembly
@@ -48,7 +51,7 @@ _start:
 The `.text` tells the computer where code is. This part of a program marks the beginning of a text segment.
 ### Label
 The expression `something:` is call a Label.
-A `label` always has a `:` at the end. The label serves as a "gateway" that can be jumped to or accessed.
+A `label` always has a `:` at the end. The label serves as a "gateway" that can be jumped to by the `instruction pointer` or accessed.
 
 ## 0. 2 - movq instruction
 ### mov
