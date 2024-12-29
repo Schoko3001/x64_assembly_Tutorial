@@ -16,7 +16,7 @@ The reasons?
 
 ### useful Links
   1. sycall https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/
-  2. 
+  2. assembler directives https://ftp.gnu/old-gnu/Manuals/gas/html_chapter/as_7.html
 
 # 0 - absolute Basics
 At the end of this chapter you will be able to write `a program that can ... do nothing?` wait what?
