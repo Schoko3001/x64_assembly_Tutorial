@@ -289,7 +289,7 @@ Although a similar readability can be achieved with comments, .equ might still b
 Many instructions like `call`, `ret`, `pop` and `push` make use of the stack.
 
 ## 2. 0 - Function in c to assembly
-If we write in c:
+If we write a program with a function in c, it might look like this:
 ```c
 int add(int a, int b)
 {
@@ -301,7 +301,7 @@ int main()
  add(1,2);
 }
 ```
-convert it into assembly, change it's structure and the way it exits, we get something like this
+Now if we convert it into assembly, change it's structure and the way it exits, we will get something like this:
 ```assembly
 .global _start
 .text
@@ -320,7 +320,7 @@ _start:
   systemcall
   
 add:
-  pushq %rbo
+  pushq %rbp
   movq %rsp, %rbp
   movl %edi, -4(%rbp)
   movl %esi, -8(%rbp)
@@ -332,8 +332,52 @@ add:
 ```
 (incomplete)
 
+## 2. 1 - Stackframe
+When a program starts, it is assigned a place to store memory. This place is called the `stack`, and we can access it with the `stackpointer`, short `rsp/esp/...`.
+This stackpointer contains the lowest adress previously used. Yes, the stack goes from a high value to a low.
+```
+address | value |
+  0     |  ...  |
+           ...
+ 40     |  ...  |
+ 48     |  ...  |
+ 56     |  ...  |
+ 64     | data  |  <-- rsp
+           ...    
+128     | data  |  <-- rbp
+```
+Lets look at what happens at the start of the Programm
+```assembly
+_start:
+  pushq %rbp
+  movq %rsp, %rbp
+```
+`pushq %rbp` does the following:
+```assembly
+dec %rsp            ; decrement %rsp ; subtract 1 from rsp
+movq %rbp, (%esp)   ; move the value of rpb into the adress rsp is pointing to
+```
+after the push %rbp, the memory storage would look like this:
+```
+address | value |
+  0     |  ...  |
+           ...
+ 40     |  ...  |
+ 48     |  ...  |
+ 56     |  128  |  <-- rsp
+ 64     | data  |
+           ...    
+128     | data  |  <-- rbp 
+```
+Essentially, the ``push %rbp` stores the current the value of rbp` on top of the stack 
 
+## 2. 2 - push and pop
 
+## 2. 3 - call
+
+## 2. 4 - Creating a new frame
+
+## 2. 5 - Returning to the old frame
 
 
 
