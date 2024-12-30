@@ -285,8 +285,59 @@ syscall
 ```
 Although a similar readability can be achieved with comments, .equ might still be usefull in some cases.
 
-# 2. 0 Stack
-  (incomplete)
+# 2 - Stack
+Many instructions like `call`, `ret`, `pop` and `push` make use of the stack.
+
+## 2. 0 - Function in c to assembly
+If we write in c:
+```c
+int add(int a, int b)
+{
+  return a + b;
+}
+
+int main()
+{
+ add(1,2);
+}
+```
+convert it into assembly, change it's structure and the way it exits, we get something like this
+```assembly
+.global _start
+.text
+
+_start:
+  pushq %rbp
+  movq %rsp, %rbp
+  movl $2, %esi
+  movl $1, %rdi
+  call add
+  popq %rbp
+
+  ;this is the exit syscall from 0. 7
+  movq $60, %rax
+  movq $0, %rdi
+  systemcall
+  
+add:
+  pushq %rbo
+  movq %rsp, %rbp
+  movl %edi, -4(%rbp)
+  movl %esi, -8(%rbp)
+  movl -4(%rbp), %edx
+  movl -8(%rbp), %eax
+  addl %edx, %eax
+  popq %rbp
+  ret
+```
+(incomplete)
+
+
+
+
+
+
+
 
 
 ### End.
