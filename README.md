@@ -108,7 +108,7 @@ rdi  |  register destination index
 
 r8, r9, r10, r11, r12, r13, r14, r15
 ```
-The `rbp, rsp` registers manage the stack.
+The `rbp, rsp` registers manage the stack, and should not be touched unless you know what you are doing.
 
 The `rax, rsi, rdi` registers are used for syscalls, although other registers might also come in use.
 
@@ -285,10 +285,10 @@ syscall
 ```
 Although a similar readability can be achieved with comments, .equ might still be usefull in some cases.
 
-# 2 - Stack
-Many instructions like `call`, `ret`, `pop` and `push` make use of the stack.
+# 2 - If and Loops | Cmp and Jmp
 
-## 2. 0 - Function in c to assembly
+# 3 - Stack and Functions 
+Many instructions like `call`, `ret`, `pop` and `push` make use of the stack.
 If we write a program with a function in c, it might look like this:
 ```c
 int add(int a, int b)
@@ -330,11 +330,35 @@ add:
   popq %rbp
   ret
 ```
-(incomplete)
+In this chapter I will explain exactly what is happening here.
 
-## 2. 1 - Stackframe
-When a program starts, it is assigned a place to store memory. This place is called the `stack`, and we can access it with the `stackpointer`, short `rsp/esp/...`.
-This stackpointer contains the lowest adress previously used. Yes, the stack goes from a high value to a low.
+## 3. 0 - Stackframe
+A stackframe the a place where a function can store its memory.
+
+Everytime a function is called, a new stack frame is created right above the previous one. 
+
+The `rsp | stack pointer` is pointing towards at the top used variable
+
+The `rbp | base  pointer` points at the `rbp of the previous stackframe`.
+
+Inbetween is the space where a function stores its variables.
+```
+address |  value  | 
+--------|---------|----------
+...     |   ...   |
+ 96     | top var |  <-- rsp
+...     |   ...   |
+120     |   var   |   
+128     | old rbp |  <-- rbp
+...     |   ...   |
+```
+Everything outside the stackframe is usually considered garbage.
+This is the reason it is not possible to directly access variables from other functions. 
+Of course in Assembly we can access memory outside of the stackframe without any problems. 
+
+When a program starts, it is assigned a place on the stack to store memory on. We can access the exact location with the `stackpointer`, short `rsp/esp/...`.
+
+In modern operating systems, there is no "below" the esp, and the value the esp is pointing to should be ignored unless you know what you are doing
 ```
 address | value |
   0     |  ...  |
@@ -342,20 +366,21 @@ address | value |
  40     |  ...  |
  48     |  ...  |
  56     |  ...  |
- 64     | data  |  <-- rsp
+ 96     |  ???  |  <-- rsp
            ...    
-128     | data  |  <-- rbp
+ n      |  ???  |  <-- rbp
 ```
+## 3. 1 - push and pop
 Lets look at what happens at the start of the Programm
 ```assembly
 _start:
   pushq %rbp
-  movq %rsp, %rbp
 ```
 `pushq %rbp` does the following:
 ```assembly
-dec %rsp            ; decrement %rsp ; subtract 1 from rsp
-movq %rbp, (%esp)   ; move the value of rpb into the adress rsp is pointing to
+decq %rsp            ; decrementq %rsp ; subtract (q) from rsp
+movq %rbp, (%rsp)    ; move rbp to the adress rsp points to.
+(I have not found any explicit source stating the (q), but it should be like this)
 ```
 after the push %rbp, the memory storage would look like this:
 ```
@@ -364,20 +389,26 @@ address | value |
            ...
  40     |  ...  |
  48     |  ...  |
- 56     |  128  |  <-- rsp
- 64     | data  |
+ 56     |   n   |  <-- rsp
+ 64     |  ???  |
            ...    
-128     | data  |  <-- rbp 
+ n      |  ???  |  <-- rbp 
 ```
-Essentially, the ``push %rbp` stores the current the value of rbp` on top of the stack 
+Essentially, the `push %rbp` pushes the `the value of rbp` on top of the stack.
 
-## 2. 2 - push and pop
+(incomplete)
 
-## 2. 3 - call
 
-## 2. 4 - Creating a new frame
+## 3. 2 - call
 
-## 2. 5 - Returning to the old frame
+## 3. 3 - Creating a new frame
+
+## 3. 4 - Returning to the old frame
+
+
+
+
+
 
 
 
