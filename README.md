@@ -34,10 +34,12 @@ To assemble and execute a file I type the following things into the terminal:
   3. `./file`
 
 ## 0. 1 - Most fundamental keywords
-### Instruction pointer
+**Instruction pointer**
+
 The `Instruction pointer` determines `which line of code is being executed`. It can be manipulated by many different instructions that i will write about in chapter 2.
 
-### .global
+**.global**
+
 To tell the computer where to start, `.global something` is written at the top of the program. This will tell the computer to start executing the code from wherever you write `something:`.
 ```assembly
 .global _start
@@ -47,14 +49,18 @@ _start:
   "do something"
   "exit the program"
 ```
-### .text
+
+**.text**
 The `.text` tells the computer where code is. This part of a program marks the beginning of a text segment.
-### Label
+
+**Label**
+
 The expression `something:` is call a Label.
 A `label` always has a `:` at the end. The label serves as a "gateway" that can be jumped to by the `instruction pointer` or accessed.
 
 ## 0. 2 - movq instruction
-### mov
+**mov**
+
 The mov instruction sets one thing equal to another. In my opinion it is the most essential instructions
 ```assembly
 movq "b", "a"     ;"a" and "b" mean nothing, not real code
@@ -67,7 +73,8 @@ It is important to remember that this repository is about the AT&T syntax, becau
 ```c
 "b" = "a" //Intel
 ```
-### instruction suffix
+**instruction suffix**
+
 The `q` at the end of `movq` is a called an `operation suffix` and stands for `quad`, an operation parameter of `64bits`. 
 
 It is important to know that there are actually multiple of these operation suffixes:
@@ -93,7 +100,8 @@ The `$` symbol tells the computer to treat whatever comes after it as `the direc
 I personally like to compare it to the `& in c` that tells you the `adress of a variable` and `not the value of a variable`.
 
 ## 0. 4 - Registers
-### register types
+**register types**
+
 A register is the fastest memory storage that can be accessed. But there are only `16 general purpose registers` in the `x64 architecture`. They are the following:
 ```txt
 rax  |  register a extended
@@ -120,7 +128,8 @@ These expressions refer to a smaller amount of bytes of the same register.
 16 bits  |  ax |  bx | ... | r8w | r9q | ...
  8 bits  | idk look it up yourself you lazy
 ```
-### usage
+**usage**
+
 In the AT&T assembly syntax, you need to put a `%` in front of the register name
 ```assembly
 movq $5, %rax
@@ -218,7 +227,8 @@ Here .Hello_World is not an assembler directive. The . is a stylistic choice and
 I use the website https://ftp.gnu/old-gnu/Manuals/gas/html_chapter/as_7.html whenever I need to look up assembler directives.
 
 ## 1. 2 - Writing into the Terminal
-### sys_write
+**sys_write**
+
 To write into the terminal we need the `Write` syscall: By looking it up we see the following:
 ```txt
 rax                      |  1  
@@ -236,7 +246,9 @@ movq $12, %rdx
 syscall
 ```
 Here the label reference `.Hello_World` represents the adress of the in 1. 1 defined string: `"Hello World\n"`.
-### lea instruction
+
+**lea instruction**
+
 `lea` stands for `load effective adress`
 
 The `lea instruction` copies the `adress` unlike the `mov instruction` which copies the value. 
@@ -379,7 +391,7 @@ _start:
 `pushq %rbp` does the following:
 ```assembly
 decq %rsp            ; decrementq %rsp ; subtract (q) from rsp
-movq %rbp, (%rsp)    ; move rbp to the adress rsp points to.
+movq %rbp, (%rsp)    ; move rbp to the adress rsp points to
 (I have not found any explicit source stating the (q), but it should be like this)
 ```
 after the push %rbp, the memory storage would look like this:
@@ -396,7 +408,14 @@ address | value |
 ```
 Essentially, the `push %rbp` pushes the `the value of rbp` on top of the stack.
 
-(incomplete)
+Pop does exactly the opposite: it takes the top value off the stack and moves it where you want.
+```assembly
+popq %rbp
+
+movq (%rsp), %rbp    ; move the value rsp points to into rbp
+incq %rsp            ; incrementq %rsp ; subtract (q) from rsp
+(I have not found any explicit source stating the (q), but it should be like this)
+```
 
 
 ## 3. 2 - call
