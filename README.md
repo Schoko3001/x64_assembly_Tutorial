@@ -300,7 +300,10 @@ Although a similar readability can be achieved with comments, .equ might still b
 # 2 - If and Loops | Cmp and Jmp
 
 # 3 - Stack and Functions 
-Many instructions like `call`, `ret`, `pop` and `push` make use of the stack.
+The Stack is the place most programming languages use to store memory and many instructions like `call`, `ret`, `pop` and `push` make use of it.
+In this chapter i will explain how we can use the stack in assembly.
+
+## 3. 0 - Translating a function from c to assembly
 If we write a program with a function in c, it might look like this:
 ```c
 int add(int a, int b)
@@ -344,7 +347,7 @@ add:
 ```
 In this chapter I will explain exactly what is happening here.
 
-## 3. 0 - Stackframe
+## 3. 1 - Stackframe
 A stackframe the a place where a function can store its memory.
 
 Everytime a function is called, a new stack frame is created right above the previous one. 
@@ -382,7 +385,7 @@ address | value |
            ...    
  n      |  ???  |  <-- rbp
 ```
-## 3. 1 - push and pop
+## 3. 2 - push and pop
 Lets look at what happens at the start of the Programm
 ```assembly
 _start:
@@ -418,11 +421,11 @@ incq %rsp            ; incrementq %rsp ; subtract (q) from rsp
 ```
 
 
-## 3. 2 - call
+## 3. 3 - call
 
-## 3. 3 - Creating a new frame
+## 3. 4 - Creating a new frame
 
-## 3. 4 - Returning to the old frame
+## 3. 5 - Returning to the old frame
 
 
 
