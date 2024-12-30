@@ -352,9 +352,9 @@ A stackframe the a place where a function can store its memory.
 
 Everytime a function is called, a new stack frame is created right above the previous one. 
 
-The `rsp | stack pointer` is pointing towards at the top used variable
+The `rsp | stack pointer` is pointing at the `top variable`. Everything `above is garbage`
 
-The `rbp | base  pointer` points at the `rbp of the previous stackframe`.
+The `rbp | base  pointer` points at the `rbp of the previous stackframe`. Everything `below is part of a previous stackframe`
 
 Inbetween is the space where a function stores its variables.
 ```
@@ -386,6 +386,8 @@ address | value |
  n      |  ???  |  <-- rbp
 ```
 ## 3. 2 - push and pop
+**push**
+
 Lets look at what happens at the start of the Programm
 ```assembly
 _start:
@@ -395,7 +397,7 @@ _start:
 ```assembly
 decq %rsp            ; decrementq %rsp ; subtract (q) from rsp
 movq %rbp, (%rsp)    ; move rbp to the adress rsp points to
-(I have not found any explicit source stating the (q), but it should be like this)
+;(I have not found any explicit source stating the (q), but it should be like this)
 ```
 after the push %rbp, the memory storage would look like this:
 ```
@@ -411,13 +413,15 @@ address | value |
 ```
 Essentially, the `push %rbp` pushes the `the value of rbp` on top of the stack.
 
+**pop**
+
 Pop does exactly the opposite: it takes the top value off the stack and moves it where you want.
 ```assembly
 popq %rbp
 
 movq (%rsp), %rbp    ; move the value rsp points to into rbp
-incq %rsp            ; incrementq %rsp ; subtract (q) from rsp
-(I have not found any explicit source stating the (q), but it should be like this)
+incq %rsp            ; incrementq %rsp ; add (q) to rsp
+;(I have not found any explicit source stating the (q), but it should be like this)
 ```
 
 
