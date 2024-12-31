@@ -325,7 +325,7 @@ _start:
   pushq %rbp
   movq %rsp, %rbp
   movl $2, %esi
-  movl $1, %rdi
+  movl $1, %edi
   call add
   popq %rbp
 
@@ -393,15 +393,16 @@ Lets look at what happens at the start of the Programm
 _start:
   pushq %rbp
 ```
-`pushq %rbp` does the following:
-```assembly
-decq %rsp            ; decrementq %rsp ; subtract (q) from rsp
-movq %rbp, (%rsp)    ; move rbp to the adress rsp points to
-;(I have not found any explicit source stating the (q), but it should be like this)
-```
-after the push %rbp, the memory storage would look like this:
+Here we can see the pushq instruction, but what does it do?
+
+`pushq %rbp` essentially executes two instructions:
+1. `decq %rsp`
+3. `movq %rbp, (%rsp)`
+
+after executing `push %rbp`, the memory storage would look like this:
 ```
 address | value |
+--------|-------|---------
   0     |  ...  |
            ...
  40     |  ...  |
@@ -415,25 +416,183 @@ Essentially, the `push %rbp` pushes the `the value of rbp` on top of the stack.
 
 **pop**
 
-Pop does exactly the opposite: it takes the top value off the stack and moves it where you want.
-```assembly
-popq %rbp
+`Pop` does exactly the opposite: it takes the top value off the stack and moves it where you want.
 
-movq (%rsp), %rbp    ; move the value rsp points to into rbp
-incq %rsp            ; incrementq %rsp ; add (q) to rsp
-;(I have not found any explicit source stating the (q), but it should be like this)
-```
+`popq %rbp` essentially executes two instructions:
+1. `movq (%rsp), %rbp`
+2. `incq %rsp`
 
+## 3. 3 - call and ret
+**call**
 
-## 3. 3 - call
+The `call` instruction is generally used to call a function.
+
+`call labelName` essentially executes two instructions:
+1. `push instructionPointer`
+2. `jump labelName`
+However, the call instruction is necessary here, because only it can push the instruction pointer
+
+**ret**
+
+Just like the pop instruction reverses the push instruction, the `ret instruction reverses the call instruction`.
+
+`ret` essentially executes two instructions:
+1. `pop instructionPointer`
+2. `jump "popped instructionPointer"`
+However, the ret instruction is necessary here, because only it can pop the instruction pointer.
 
 ## 3. 4 - Creating a new frame
+Now that we know the pop, push and call instructions, lets take a look at the assembly code from 3. 0 and go through it step by step
+```assembly
+.global _start
+.text
+
+_start:
+  pushq %rbp          ; <-- value of rbp is saved on stack
+  movq %rsp, %rbp     ; <-- rbp is moved to rsp
+```
+After these instructions, a new stackframe for the _start: function was created.
+
+The stack now looks like this:
+```
+address  |  value  |
+---------|---------|----------
+  0      |   ...   |
+             ...
+ 40      |   ...   |
+ 48      |   ...   |
+ 56      | old rbp |  <-- rsp, rbp
+ 64      |   ???   |
+             ...    
+ old rbp |   ???   | 
+```
+In our case, there is nothing in the _start function, but since that would be a bad example, lets just assume that we stored some variables.
+```
+address  |  value  |
+---------|---------|----------
+  0      |   ...   |
+             ...
+ 32      |   ...   |
+ 40      |  var b  |  <-- rsp
+ 48      |  var a  |
+ 56      | old rbp |  <-- rbp
+ 64      |   ???   |
+             ...    
+ old rbp |   ???   | 
+```
+The next step is to prepare for the new function "add".
+
+We move the function parameters into the registers:
+```assembly
+  movl $2, %esi
+  movl $1, %edi
+```
+In our case 2 and 1, because we want our function to add 1 and 2.
+
+Now with the preparations done, the program can call the function:
+```assembly
+  call add
+```
+We have now `pushed the old instruction pointer` onto the top of the stack, and the new instruction pointer `jumped to the "add" label`
+
+The stack now looks like this:
+```
+address  |  value  |
+  0      |   ...   |
+             ...
+ 24      |   ...   |
+ 32      |   i p   |  <-- rsp
+ 40      |  var b  |
+ 48      |  var a  |
+ 56      | old rbp |  <-- rbp
+ 64      |   ???   |
+             ...    
+ old rbp |   ???   | 
+```
+Next, we will repeat what we did for the _start function: `set up the "add" function stackframe`
+```assembly
+add:
+  pushq %rbp
+  movq %rsp, %rbp
+```
+The stack now looks like this:
+```
+address  |  value  |
+  0      |   ...   |
+             ...
+ 16      |   ...   |
+ 24      | old rbp |  <-- rsp, rbp
+ 32      |   i p   |
+ 40      |  var b  |
+ 48      |  var a  |
+ 56      | old rbp |
+ 64      |   ???   |
+             ...    
+ old rbp |   ???   | 
+```
+Now the move function enters the parameters into the stack with:
+```assembly
+  movl %edi, -4(%rbp)
+  movl %esi, -8(%rbp)
+```
+The stack now looks like this:
+```
+address  |  value  |
+  0      |   ...   |
+             ...
+  8      |   ...   |
+ 16      |    1    |
+ 20      |    2    |
+ 24      | old rbp |  <-- rsp, rbp
+ 32      |   i p   |
+ 40      |  var b  |
+ 48      |  var a  |
+ 56      | old rbp |
+ 64      |   ???   |
+             ...    
+ old rbp |   ???   | 
+```
+Note that we have not moved the rsp, and we don't need to since we don't intend on calling a new function from this one.
 
 ## 3. 5 - Returning to the old frame
 
+Now we add the parameters we just stored into `eax (rax)`.
+```assembly
+  movl -4(%rbp), %edx
+  movl -8(%rbp), %eax
+  addl %edx, %eax
+```
+We do this, because the `return value of a function should always be stored in rax`.
 
+Now we just need to `close the "add" function` and `return to the _start funtion`.
+```assembly
+  popq %rbp
+  ret
+```
+After `popq %rbp`, the rbp returns to its location in the stackframe of the _start function.
 
+The `ret` instructions `pops the saved location` of the instruction pointer and `jumps to it`.
 
+It arrives at the instruction `right below the "call add" instruction`
+
+The stack now looks like this:
+```
+address  |  value  |
+  0      |   ...   |
+             ...
+  8      |   ...   |
+ 16      |    1    |
+ 20      |    2    |
+ 24      | old rbp |
+ 32      |   i p   |
+ 40      |  var b  | <-- rsp
+ 48      |  var a  |
+ 56      | old rbp | <-- rbp
+ 64      |   ???   |
+             ...    
+ old rbp |   ???   | 
+```
+Now we have completely exited the function and are back in the _start function. I could now also go through exiting the _start function, but that would be a bit too repetitive.
 
 
 
