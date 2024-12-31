@@ -554,7 +554,7 @@ address  |  value  |
 ```
 Note that we have not moved the rsp, and we don't need to since we don't intend on calling a new function from this one.
 
-## 3. 5 - Returning to the old frame
+## 3. 5 - Return to a frame
 
 Now we add the parameters we just stored into `eax (rax)`.
 ```assembly
