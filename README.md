@@ -556,7 +556,7 @@ Note that we have not moved the rsp, and we don't need to since we don't intend 
 
 ## 3. 5 - Return to a frame
 
-Now we add the parameters we just stored into `eax (rax)`.
+Now we add the parameters we just stored in the stack into `eax (rax)`.
 ```assembly
   movl -4(%rbp), %edx
   movl -8(%rbp), %eax
@@ -592,7 +592,7 @@ address  |  value  |
              ...    
  old rbp |   ???   | 
 ```
-Now we have completely exited the function and are back in the _start function. I could now also go through exiting the _start function, but that would be a bit too repetitive.
+We have completely exited the function and are back in the _start function. I could now also go through exiting the _start function, but that would be a bit too repetitive.
 
 
 
