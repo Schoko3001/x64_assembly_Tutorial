@@ -23,7 +23,7 @@ At the end of this chapter you will be able to write `a program that can ... do 
 
 Well, even writing a program that does nothing except for not crashing is not that simple in assembly.
 
-## 0. 0 writing and assembling a program
+## 0. 1 writing and assembling a program
 My Code is written on `vsCode` with the `GNU Assembler Lanuguage Support`.
 
 I use the `.s` file extension.
@@ -33,7 +33,7 @@ To assemble and execute a file I type the following things into the terminal:
   2. `ld file.o -o file`   file.o -> file
   3. `./file`
 
-## 0. 1 - Most fundamental keywords
+## 0. 2 - Most fundamental keywords
 **Instruction pointer**
 
 The `Instruction pointer` determines `which line of code is being executed`. It can be manipulated by many different instructions that i will write about in chapter 2.
@@ -58,7 +58,7 @@ The `.text` tells the computer where code is. This part of a program marks the b
 The expression `something:` is call a Label.
 A `label` always has a `:` at the end. The label serves as a "gateway" that can be jumped to by the `instruction pointer` or accessed.
 
-## 0. 2 - movq instruction
+## 0. 3 - movq instruction
 **mov**
 
 The mov instruction sets one thing equal to another. In my opinion it is the most essential instructions
@@ -90,7 +90,7 @@ f | 32 bits |  4 bytes
 t | 80 bits | 10 bytes
 ```
 
-## 0. 3 - $
+## 0. 4 - $
 The `$` is used to read the value of something. For example: assigning "a" the value 5 would look like this:
 ```assembly
 movq $1, "a"
@@ -99,7 +99,7 @@ The `$` symbol tells the computer to treat whatever comes after it as `the direc
 
 I personally like to compare it to the `& in c` that tells you the `adress of a variable` and `not the value of a variable`.
 
-## 0. 4 - Registers
+## 0. 5 - Registers
 **register types**
 
 A register is the fastest memory storage that can be accessed. But there are only `16 general purpose registers` in the `x64 architecture`. They are the following:
@@ -141,7 +141,7 @@ a = 5
 b = a
 ```
 
-## 0. 5 - Syscall
+## 0. 6 - Syscall
 In order to do anything outside the program, be it writing, reading, or even exiting the program, you need perform a `syscall`, short for `systemcall`. Think of it as asking the operating system to do something for you.
 
 When writing:
@@ -163,7 +163,7 @@ I personally use https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86
 
 The `systemcall` stores its `return value in the rax register`. This means, that if you want to perform muliple systemcalls of the same type with the same rax value, you still need to `readjust the rax value every syscall`.
 
-## 0. 6 - Exit
+## 0. 7 - Exit
 Even to exit a program, you need to perform a syscall.
 ```assembly
 movq $60, %rax
@@ -174,7 +174,7 @@ The `rax is set to 60`, which makes the syscall a `sys_exit`.
 
 The `rdi` determines for sys_exit the `error_code`. As you might know, an error code of 0 means that no error happened.
 
-## 0. 7 - First program
+## 0. 8 - First program
 Combining everything that has been said up until now would look like this:
 ```assembly
 .global _start
@@ -203,12 +203,12 @@ Obviously this will also work for the rdi/error_code being any other value.
 # 1 - Hello World  
 In this chapter I will show you how to write a easily readable program that can write "Hello World" in the Terminal.
 
-## 1. 0 - What needs to be done?
+## 1. 1 - What needs to be done?
 We have previously written a Program that starts and ends.
 
 For it to write "Hello World" we will need to `create a string` and `tell the OS to print it` before exiting the program. 
 
-## 1. 1 - Creating a string
+## 1. 2 - Creating a string
 The `.ascii` tells the computer that the "Hello World" is a string. Apart from `.ascii` you may also find:
 ```txt
 .ascii  "Hello World\n"  |  
@@ -226,7 +226,7 @@ Here .Hello_World is not an assembler directive. The . is a stylistic choice and
 
 I use the website https://ftp.gnu/old-gnu/Manuals/gas/html_chapter/as_7.html whenever I need to look up assembler directives.
 
-## 1. 2 - Writing into the Terminal
+## 1. 3 - Writing into the Terminal
 **sys_write**
 
 To write into the terminal we need the `Write` syscall: By looking it up we see the following:
@@ -263,7 +263,7 @@ However the latter is not the normal way to do this. Usually the `lea` instructi
 
 I `highly recommended to use the lea instruction` for readability. Especially since the intel syntax does not use a $.
 
-## 1. 3 - Hello World program
+## 1. 4 - Hello World program
 By combining everything that has been said, we get something like this:
 ```assembly
 .global _start
@@ -282,7 +282,7 @@ _start:
   movq $0, %rdi
   syscall
 ```
-## 1. 4 - .equ
+## 1. 5 - .equ
 The .equ assembler directive can be used to make the program more readable by giving us the opportunity to replace numbers with words.
 ```assembly
 .equ Hello_World_len,12
@@ -297,13 +297,13 @@ syscall
 ```
 Although a similar readability can be achieved with comments, .equ might still be usefull in some cases.
 
-# 2 - If and Loops | Cmp and Jmp
+# 2 - Conditional instructions
 
 # 3 - Stack and Functions 
 The Stack is the place most programming languages use to store memory and many instructions like `call`, `ret`, `pop` and `push` make use of it.
 In this chapter i will explain how we can use the stack in assembly.
 
-## 3. 0 - Translating a function from c to assembly
+## 3. 1 - Translating a function from c to assembly
 If we write a program with a function in c, it might look like this:
 ```c
 int add(int a, int b)
@@ -347,7 +347,7 @@ add:
 ```
 In this chapter I will explain exactly what is happening here.
 
-## 3. 1 - Stackframe
+## 3. 2 - Stackframe
 A stackframe the a place where a function can store its memory.
 
 Everytime a function is called, a new stack frame is created right above the previous one. 
@@ -385,7 +385,7 @@ address | value |
            ...    
  n      |  ???  |  <-- rbp
 ```
-## 3. 2 - push and pop
+## 3. 3 - push and pop
 **push**
 
 Lets look at what happens at the start of the Programm
@@ -422,7 +422,7 @@ Essentially, the `push %rbp` pushes the `the value of rbp` on top of the stack.
 1. `movq (%rsp), %rbp`
 2. `incq %rsp`
 
-## 3. 3 - call and ret
+## 3. 4 - call and ret
 **call**
 
 The `call` instruction is generally used to call a function.
@@ -441,7 +441,7 @@ Just like the pop instruction reverses the push instruction, the `ret instructio
 2. `jump "popped instructionPointer"`
 However, the ret instruction is necessary here, because only it can pop the instruction pointer.
 
-## 3. 4 - Creating a new frame
+## 3. 5 - Creating a new frame
 Now that we know the pop, push and call instructions, lets take a look at the assembly code from 3. 0 and go through it step by step
 ```assembly
 .global _start
@@ -554,7 +554,7 @@ address  |  value  |
 ```
 Note that we have not moved the rsp, and we don't need to since we don't intend on calling a new function from this one.
 
-## 3. 5 - Return to a frame
+## 3. 6 - Return to a frame
 
 Now we add the parameters we just stored in the stack into `eax (rax)`.
 ```assembly
