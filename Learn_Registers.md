@@ -81,16 +81,32 @@ It serves as a storage for single bits values with predefined uses.
 
 Link for more information: https://en.wikipedia.org/wiki/FLAGS_register
 
+
 ## 2. 1 - Exeptions
+
+
 
 ## 2. 2 - Carry flag
 Unsigned operation resulted in an integer Overflow -> flag = 1
+
+This happens w
 
 conditional jump instructions:
 ```
 flag = 1 | jc  | jump if carry
 flag = 0 | jnc | jump if not carry
 ````
+conditional move instruction:
+```
+flag = 1 | 
+flag = 0 | 
+```
+conditional set instruction:
+```
+flag = 1 | 
+flag = 0 | 
+```
+
 ## 2. 3 - Overflow flag
 Signed operation resulted in an integer Overflow -> flag = 1
 
@@ -100,6 +116,17 @@ conditional jump instructions:
 flag = 1 | jo  | jump if overflow
 flag = 0 | jno | jump if not overflow
 ```
+conditional move instruction:
+```
+flag = 1 | 
+flag = 0 | 
+```
+conditional set instruction:
+```
+flag = 1 | 
+flag = 0 | 
+```
+
 ## 2. 6 - Zero flag (also equality)
 value is zero -> flag = 1
 
@@ -110,6 +137,21 @@ flag = 1 | je  | jump if equal
 flag = 0 | jnz | jump if not zero
 flag = 0 | jne | jump if not equal
 ```
+conditional move instruction:
+```
+flag = 1 |
+flag = 1 |
+flag = 0 | 
+flag = 0 | 
+```
+conditional set instruction:
+```
+flag = 1 | 
+flag = 1 | 
+flag = 0 | 
+flag = 0 | 
+```
+
 ## 2. 5 - Parity flag
 Lowest bit is 0, value is even -> flag = 1
 
@@ -120,6 +162,21 @@ flag = 1 | jpe | jump if parity is even
 flag = 0 | jnp | jump if not parity
 flag = 0 | jpo | jump if parity is odd
 ```
+conditional move instruction:
+```
+flag = 1 | 
+flag = 1 | 
+flag = 0 | 
+flag = 0 | 
+```
+conditional set instruction:
+```
+flag = 1 | 
+flag = 1 | 
+flag = 0 | 
+flag = 0 | 
+```
+
 ## 2. 6 - Sign flag
 Highest bit not zero -> flag = 1 
 
@@ -127,6 +184,16 @@ conditional jump instructions:
 ```
 flag = 1 | js  | jump if signed
 flag = 0 | jns | jump if not signed
+```
+conditional move instruction:
+```
+flag = 1 | 
+flag = 0 | 
+```
+conditional set instruction:
+```
+flag = 1 | 
+flag = 0 | 
 ```
 
 
