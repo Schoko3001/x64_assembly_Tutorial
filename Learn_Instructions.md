@@ -3,14 +3,33 @@
 # Syntax
 
 # Data Movement
+```
+mov
+lea
+```
 
-# Arithmetik
+# Arithmetic
 
 ## placeholder
 
 ## Bitwise
+```
+not | and | or | xor
+```
+`xor %a, %a` is often used in the place of `mov $0, %a` because it is faster.
 
 ## Shift
+```
+                 | left | right
+-----------------|------|-------             
+   logical shift | slf  | slr
+arithmetic shift | saf  | sar
+```
+- leftshift `"<<"` increments the value
+- rightshift `">>"` decrements the value
+
+- a logical shift also shifts the sign
+- an arithmetic shift doesn't shift the sign and if there is one, a leftshift fills the new space with "1". This makes an arithmetic shift always a multiplication of two or division by two.
 
 # Conditional Instructions
 
@@ -23,6 +42,7 @@ cmov is the conditional version the move instruction.
 set sets an `8 bit register` to 1 if true, and to 0 if not.
 
 ## lookup tables
+**condition suffixes written out:**
 ```
 n | not      | ! 
 
@@ -40,17 +60,19 @@ p | parity   |  lowest bit is 0
 
 
 ```
+**condition suffix table for arithmetics:**
 ```
          |   =   |   !=   |   >    |   >=   |   <    |   <=
 ---------|-------|--------|--------|--------|--------|--------
 unsigned | e, z  | ne, nz | a, nbe | ae, nb | b, nae | be, na
 signed   | e, z  | ne, nz | g, nle | ge, nl | l, nge | le, ng
 ```
+**condition suffix table for flags:**
 ```
          | ZF     | CF | OF | SF | PF
----------|--------|----|----|----|--------
-flag = 1 | z, e   | c  | o  | s  | p, pe
-flag = 0 | nz, ne | nc | no | ns | np, po
+---------|--------|----|----|----|--------------------
+flag = 1 | z, e   | c  | o  | s  | p, pe (parityEven)
+flag = 0 | nz, ne | nc | no | ns | np, po (parityOdd)
 ```
 
 ## =
